@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 
 export default function Home() {
   const [htmlElement, setHtmlElement] = useState<JSX.Element | undefined>(undefined)
@@ -11,9 +12,17 @@ export default function Home() {
         endpointUrl: '<endpoint url>>',
         threadId: "<thread id>",
       };
-      const ContosoChatContainer = (await import('../ContosoChatContainer')).ContosoChatContainer;
-      const element = <ContosoChatContainer userIdentifier={someProps.userId} threadId={someProps.threadId} endpointUrl={someProps.endpointUrl} token={someProps.token} displayName={someProps.displayName}/>
+
+      const OnlyChatSDKComponent = dynamic(
+        () =>
+          import("../components/OnlyChatSDKComponent").then((mod) => mod.OnlyChatSDKComponent),
+        { ssr: false }
+      );
+      const element = <OnlyChatSDKComponent userIdentifier={someProps.userId} threadId={someProps.threadId} endpointUrl={someProps.endpointUrl} token={someProps.token} displayName={someProps.displayName}/>
       setHtmlElement(element);
+      // const ContosoChatContainer = (await (await import('../components/OnlyChatSDKComponent')));
+      // const element = <ContosoChatContainer userIdentifier={someProps.userId} threadId={someProps.threadId} endpointUrl={someProps.endpointUrl} token={someProps.token} displayName={someProps.displayName}/>
+      // setHtmlElement(element);
     })();
   }, [])
   
